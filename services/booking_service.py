@@ -97,6 +97,9 @@ class Clinic:
                     raise ValueError(
                         "An emergency booking cannot bump a confirmed appointment"
                     )
+
+                # Check every conflict before cancelling any, so rejection
+                # cannot leave the clinic with only some bookings bumped.
                 if self._clock.now() >= start_hour:
                     raise ValueError(
                         "An emergency booking cannot bump an appointment "
@@ -159,6 +162,7 @@ class Clinic:
             raise ValueError(f"The {description} is not registered with this clinic")
 
     def _conflicts(self, patient, staff, start_hour):
+        # Cancelled appointments no longer reserve a patient's or staff member's hour.
         return [
             appointment
             for appointment in self._appointments

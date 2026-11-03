@@ -9,6 +9,7 @@ from policies.cancellation_policy import CancellationPolicy
 # 3. Every appointment lasts exactly one hour.
 # 4. A cancelled appointment can never be restored.
 # 5. An appointment cannot be cancelled after it starts.
+# 6. A confirmed appointment needs at least two hours' notice to cancel.
 class Appointment:
 
     PENDING = "PENDING"
@@ -80,7 +81,7 @@ class Appointment:
         return self._cancellation_reason
 
     def confirm(self):
-
+        # Use this method for status changes so cancelled appointments stay final.
         if self._status == Appointment.CANCELLED:
             raise ValueError("Cancelled appointments cannot be restored")
         if self._status == Appointment.CONFIRMED:
@@ -89,10 +90,10 @@ class Appointment:
         self._status = Appointment.CONFIRMED
 
     def cancel(self, current_hour, reason="normal"):
-
         if self._status == Appointment.CANCELLED:
             raise ValueError("Appointment is already cancelled")
 
+        # The policy checks the time limit before changing the appointment.
         self._cancellation_policy.validate(
             self._status, current_hour, self._start_hour
         )

@@ -1,269 +1,198 @@
 # Clinic Appointment System
 
-## Project description
+A small Python terminal program for managing clinic patients, staff, and
+appointments. It uses only Python's standard library.
 
-A Python terminal application for registering clinic patients and staff,
-booking and managing one-hour appointments, enforcing appointment rules, and
-recording clinic actions in a readable log. It uses only the Python standard
-library.
+**Registration number:** 2420089
 
-**Student registration number:** 2420089  
-**Pair members:** Marlvin A. Munyanyi and Takudzwa Pablo Magawagawa  
-**Language:** Python 3.14
+**Pair members:** Marlvin A. Munyanyi and Takudzwa Pablo Magawagawa
 
-The registration number gives `P mod 4 = 1`, so the assigned extension in
-this submission is **emergency bookings**.
+**Python version:** 3.14
 
-## Folder structure
+The registration number gives `2420089 mod 4 = 1`, so this project uses the
+**emergency booking** option from the assignment.
+
+## Project files
 
 ```text
 ClinicAppointmentSystem/
-├── main.py
-├── README.md
-├── models/
-│   ├── __init__.py
-│   ├── person.py
-│   ├── patient.py
-│   ├── staff.py
-│   ├── doctor.py
-│   ├── nurse.py
-│   ├── pharmacist.py
-│   ├── appointment.py
-│   ├── lecturer.py
-│   └── medical_lecturer.py
-├── policies/
-│   ├── __init__.py
-│   └── cancellation_policy.py
-├── services/
-│   ├── __init__.py
-│   ├── clock.py
-│   ├── appointment_log.py
-│   └── booking_service.py
-└── tests/
-    └── test_clinic.py
+├── main.py                 # Menu and demonstrations
+├── models/                 # People and appointments
+├── policies/               # Cancellation rules
+├── services/               # Clinic, clock, and log
+├── tests/                  # Automated tests
+└── README.md
 ```
 
-## Run the application
+## Start the program
 
-Open a terminal in the project directory and run:
+Open PowerShell in the project folder and run:
 
 ```powershell
 python main.py
 ```
 
-The menu starts with a clinic hour of 10. Choose a numbered action, follow its
-prompts, and use option 16 to exit. Option 15 runs the predictable sample
-demonstration without changing the clinic used by the menu.
+Choose a number from the menu. Option 15 runs the full sample demonstration;
+option 16 exits.
 
-## Run the tests
+To run the tests:
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
-The test suite checks validation, fees, appointment transitions, conflicting
-bookings, emergency bumping, logging, multiple inheritance, and the testable
-clock.
+## Class diagram
 
-## Important classes
+```mermaid
+classDiagram
+    Person <|-- Patient
+    Person <|-- Staff
+    Staff <|-- Doctor
+    Staff <|-- Nurse
+    Staff <|-- Pharmacist
+    Person <|-- Lecturer
+    Doctor <|-- MedicalLecturer
+    Lecturer <|-- MedicalLecturer
+    Clinic --> Clock
+    Clinic --> AppointmentLog
+    Clinic --> CancellationPolicy
+    Clinic o-- Patient
+    Clinic o-- Staff
+    Clinic o-- Appointment
+    Appointment --> Patient
+    Appointment --> Staff
+```
 
-- `Person` ([models/person.py](./models/person.py)) is an abstract base class
-  for people in the clinic. It validates names and positive integer IDs and
-  declares the abstract `role()` method. Its constructor counter helps
-  demonstrate the multiple-inheritance requirement.
-- `Patient` ([models/patient.py](./models/patient.py)) adds the emergency
-  flag. The clinic can flag a registered patient through its logged
-  `flag_patient_emergency()` operation.
-- `Staff` ([models/staff.py](./models/staff.py)) is an abstract person with an
-  abstract `fee()` method. `Doctor`, `Nurse`, and `Pharmacist` each provide
-  their own fee and role.
-- `Lecturer` ([models/lecturer.py](./models/lecturer.py)) adds a module name.
-  `MedicalLecturer` ([models/medical_lecturer.py](./models/medical_lecturer.py))
-  inherits from both `Doctor` and `Lecturer`.
-- `Appointment` ([models/appointment.py](./models/appointment.py)) stores its
-  patient, staff member, start hour, status, and cancellation reason. Its
-  duration is one hour.
-- `Clinic` ([services/booking_service.py](./services/booking_service.py))
-  owns the registered people and appointments. It checks IDs and booking
-  conflicts, coordinates emergency bookings, and logs its operations. Its
-  collection properties return tuples rather than the internal lists.
-- `CancellationPolicy`
-  ([policies/cancellation_policy.py](./policies/cancellation_policy.py))
-  applies the cancellation-time rules.
-- `Clock` ([services/clock.py](./services/clock.py)) provides a controllable
-  current clinic hour; the program never reads the computer's clock.
-- `AppointmentLog` ([services/appointment_log.py](./services/appointment_log.py))
-  is a context manager that records successful and failed operations.
+## How the main parts work
 
-## Object-oriented design
+- **Person** is the shared base for people. It checks that names are not blank
+  and IDs are positive integers.
+- **Patient** can be marked as an emergency patient.
+- **Staff** is the shared base for clinic workers. Doctors, nurses, and
+  pharmacists each supply their own role and fee.
+- **Appointment** connects one patient with one staff member at one start hour.
+  Appointments last one hour.
+- **Clinic** registers people and applies the booking rules.
+- **Clock** provides the current clinic hour. The program does not read the
+  computer's clock.
+- **AppointmentLog** records each clinic action, including failed actions.
+- **CancellationPolicy** checks when an appointment can be cancelled.
+- **Lecturer** has a module name. **MedicalLecturer** is both a doctor and a
+  lecturer.
 
-- **Encapsulation:** object fields are kept in underscore-prefixed attributes.
-  Read-only properties provide the information callers need. Clinic
-  collections and log entries are returned as tuples, which do not let callers
-  add or remove items from the clinic's internal lists.
-- **Abstraction:** `Person` and `Staff` are abstract classes. A concrete
-  patient or staff member must implement its role, and each concrete staff
-  class must provide its fee.
+The project demonstrates four common object-oriented ideas:
+
+- **Encapsulation:** fields are kept inside objects; the clinic gives out
+  read-only views of its lists.
+- **Abstraction:** `Person` and `Staff` define behavior their subclasses must
+  provide.
 - **Inheritance:** patients and staff are people; doctors, nurses, and
-  pharmacists are staff. A medical lecturer is both a doctor and a lecturer.
-- **Polymorphism:** the fee display uses one loop over the clinic's staff
-  collection and calls `role()` and `fee()` on each object. It does not need
-  type checks or separate loops for each staff kind.
+  pharmacists are staff.
+- **Polymorphism:** one loop can print every staff member's role and fee by
+  calling the same methods. It does not need a different loop for each role.
 
-For `P = 2420089`, the expected fees are:
+For registration number `P = 2420089`, the fees are:
 
-| Staff role | Fee calculation | Fee |
-|---|---:|---:|
+| Staff member | Calculation | Fee |
+|---|---|---:|
 | Doctor | `40 + 5 * (P % 5)` | 60 |
 | Nurse | `10 + (P % 3)` | 11 |
 | Pharmacist | `5` | 5 |
 
-## Time, appointments, and booking rules
+## Appointment rules
 
-The clinic hour is a whole number from 0 to 168. An appointment has a start
-hour in that range and lasts exactly one hour. `Clock.now()` is the only
-source of the current clinic hour. Advance it through `Clinic.advance_time()`;
-no operating-system or computer date/time is consulted.
+An appointment starts as `PENDING`. It may be confirmed or cancelled. A
+confirmed appointment may also be cancelled, but only with at least two
+hours' notice. Once cancelled, it cannot be restored. No appointment can be
+cancelled once it has started.
 
-New appointments start as `PENDING`. The legal transitions are:
+The clinic prevents a patient or staff member from having two active
+(non-cancelled) appointments at the same hour. IDs must be unique across all
+registered patients and staff.
 
-```text
-PENDING   -> CONFIRMED
-PENDING   -> CANCELLED
-CONFIRMED -> CANCELLED
-```
+The clinic hour is a whole number from 0 to 168. The `Clock` starts at hour 10
+in the menu and can be advanced in the demonstration. Passing a `Clock` into
+the clinic makes time predictable in tests; tests do not need to wait for the
+real time to change.
 
-`CANCELLED` is terminal: a cancelled appointment cannot be confirmed or
-restored. A pending appointment can be cancelled before it starts. A confirmed
-appointment can be cancelled only with at least two hours' notice. No
-appointment can be cancelled at or after its start hour. Illegal transitions
-raise an exception with an explanatory message.
+## Emergency bookings
 
-The clinic prevents a patient or staff member from having two non-cancelled
-appointments at the same hour. Cancelled appointments no longer count as
-conflicts. Person IDs are unique across the clinic's patient and staff lists.
-Registration rejects empty names, non-integer or non-positive IDs, and
-duplicate IDs.
+An emergency patient can replace a conflicting `PENDING` appointment. The
+clinic first checks all appointments that conflict. If any is already
+`CONFIRMED`, the emergency booking is rejected and none of the other bookings
+are changed. Otherwise, each conflicting pending appointment is cancelled
+with the reason `"bumped"`, and the new emergency appointment is created as
+`PENDING`. A regular patient cannot bump another booking.
 
-## Emergency-booking twist
+## Logging
 
-An emergency patient is clearly marked in patient and appointment displays.
-When an emergency booking conflicts with one or more `PENDING` appointments,
-the clinic first checks all conflicts. If none are confirmed and the slots
-have not started, it cancels each conflicting pending appointment with the
-exact reason `"bumped"` and creates a new `PENDING` emergency appointment.
+Each clinic action opens the log, records success or failure, and tries to
+close the log even if the action fails. Errors are still reported to the
+caller; they are not silently ignored.
 
-If any conflicting appointment is `CONFIRMED`, the emergency booking is
-rejected and no pending appointment is cancelled as a side effect. A normal
-patient cannot bump any appointment. Successful bookings, bumps, and
-rejections are all logged.
+If the output stream itself fails, the program cannot guarantee the log entry
+was written. It reports the write or close error instead of pretending the
+entry was saved.
 
-## Logging and context managers
+## Multiple inheritance
 
-Each clinic operation uses the `AppointmentLog` context manager. Entering an
-operation prints and records `[log] opened`. It records the successful action,
-or a `FAILED ...` entry if the operation raises an exception. Exiting always
-attempts to print and record `[log] closed`, then the original operation error
-is re-raised. The menu catches ordinary validation and lookup errors so the
-user can continue.
+`MedicalLecturer` inherits from both `Doctor` and `Lecturer`. Python's method
+resolution order (MRO) is the order Python follows when looking for methods.
+Both parent classes use `super()`, so they share one `Person` base and its
+constructor runs once. Option 12 prints the MRO and the constructor count.
 
-If the output stream fails while writing a log entry, that entry is not added
-to the in-memory history and the write error propagates. The context manager
-still attempts the closing line. If writing or closing fails, no program can
-guarantee that the failed output reached its destination; this implementation
-does not claim that it did. A logging failure is surfaced to the caller rather
-than silently hidden.
-
-## Multiple inheritance and MRO
-
-`MedicalLecturer` inherits from `Doctor` and `Lecturer`. Both inheritance
-paths lead to the same `Person` base class. The classes use cooperative
-`super()` calls: Python follows the method resolution order (MRO), a
-consistent list of classes, and passes initialization along that list. This
-means the shared `Person` constructor runs exactly once. Option 12 prints the
-constructor count and MRO; the tests check the count as well.
-
-`MedicalLecturer.fee()` uses the inherited doctor fee. A lecturer module does
-not add a different clinical fee. In Java, a class cannot extend both
-`Doctor` and `Lecturer`; `Lecturer` would instead be modeled as an interface,
-and the medical lecturer would extend `Doctor` while implementing
-`Lecturer`.
+`MedicalLecturer.fee()` uses the doctor fee because the lecturer role does not
+add a separate clinical fee. In Java, a class cannot extend two classes, so
+`Lecturer` would be an interface; `MedicalLecturer` would extend `Doctor` and
+implement `Lecturer`.
 
 ## Five-minute demonstration
 
-From the menu, select option 15. It uses fixed sample people and clinic hours,
-and demonstrates:
+Choose option 15 to see sample patients and staff registered, staff fees
+printed, appointments booked and cancelled, and a failed cancellation logged.
+It also demonstrates an emergency bump, rejection when a confirmed booking
+conflicts, the controlled clock, and multiple inheritance. The sample uses
+fixed names and hours so the result is repeatable.
 
-1. Registering patients and staff, including emergency patients.
-2. Printing all staff roles and fees in one polymorphic loop.
-3. Booking and confirming an appointment.
-4. Cancelling an appointment.
-5. A deliberate failed cancellation and its failure log.
-6. An emergency booking that bumps a pending appointment.
-7. Rejection of an emergency booking that conflicts with a confirmed
-   appointment.
-8. The `MedicalLecturer` role, fee, MRO, and one-time `Person` initialization.
-9. Advancing a controlled clock and reviewing the appointment list.
+## Design decisions
 
-Every clinic action prints its log open/close lines and a success or failure
-entry. Options 11, 12, and 13 run the emergency, multiple-inheritance, and
-clock demonstrations individually.
+### D1. Where is the two-hour rule?
 
-## Design decision log
+It is in `CancellationPolicy`, which `Appointment` calls. Putting it only in
+the clinic could let someone cancel an appointment another way without the
+check. Keeping it in a separate class also makes the rule easier to change
+without mixing it into appointment status handling.
 
-### D1. Where does the two-hour rule live?
+### D2. Why use a Clock?
 
-It lives in the separate `CancellationPolicy`, called by `Appointment`.
-Putting it only in `Clinic` could let callers bypass the rule by cancelling
-an appointment directly. Putting it in `Staff` would incorrectly make a
-clinic-wide rule depend on the kind of staff member. Keeping it in
-`Appointment` itself would be simpler, but would mix appointment state
-transitions with a rule that could later be changed or replaced. A small
-policy object keeps the rule in one place and lets both direct appointment
-changes and clinic operations use the same check.
+Tests can set a known hour and advance it. Using the computer's time directly
+would make timing tests unpredictable and harder to repeat.
 
-### D2. Why is the Clock testable?
+### D3. What changed for Pharmacist?
 
-The clinic receives a `Clock` and asks it for `now()`. A test can set a known
-hour and advance it without waiting. This makes boundary checks, such as
-cancelling with exactly two hours' notice, repeatable. If the code read the
-computer clock directly, those tests would depend on when they happened to
-run and could not reliably set the clinic's current hour.
+The pharmacist class provides its role and fee. The shared display loop and
+clinic do not need pharmacist-specific code.
 
-### D3. What changed when Pharmacist was added?
+### D4. What fee does MedicalLecturer use?
 
-The `Pharmacist` class supplies its role and fee. The shared staff display
-loop calls `role()` and `fee()`, so neither the loop nor `Clinic` needed a
-pharmacist-specific change. This is the benefit of polymorphism.
+It uses the doctor fee. Python's MRO and cooperative `super()` calls make the
+shared `Person` constructor run once. Calling both parent constructors
+directly could initialize the same person twice.
 
-### D4. What should MedicalLecturer.fee() return?
+### D5. What if logging fails?
 
-It returns the doctor fee because a medical lecturer is also a doctor, and
-the lecturer role has no separate clinical fee. Cooperative `super()` calls
-and Python's MRO route initialization through the shared `Person` base once.
-Without that cooperative method chain, calling both parent initializers
-directly could initialize the same person twice or overwrite shared values.
+The error is allowed to reach the caller. The program only adds a line to the
+log history after writing succeeds, and it tries to write the closing line.
+If the output device is unavailable, the program cannot promise that a line
+reached it.
 
-### D5. What if writing to or closing the log fails?
+### D6. Why can emergencies bump pending appointments only?
 
-The error should be visible, not reported as a successful log. This
-implementation appends an entry to history only after writing it succeeds.
-It propagates write and close errors and attempts the close line in a
-`finally` block. If the output device itself is unavailable, the program
-cannot guarantee delivery of either the failed entry or closing line; that
-limitation is made explicit rather than hidden.
+A pending appointment is not yet confirmed. A confirmed appointment is a
+commitment, so the clinic protects it and rejects the emergency booking.
 
-### D6. Why can an emergency booking bump PENDING but not CONFIRMED?
+## Note
 
-A pending appointment has not yet been confirmed, so the assigned emergency
-exception may replace it. A confirmed appointment is a commitment to the
-patient and staff member. The emergency operation checks every conflict
-before cancelling any pending appointment; if a confirmed appointment is
-among them, the request is rejected without changing the pending bookings.
-
-## Limitations
-
-The application keeps its records in memory. They are reset when the program
-exits; persistent storage was not required and no database was added. The
-assigned emergency twist is implemented; waiting lists and patient discounts
-are alternative twists and are not included.
+Records are kept in memory and are cleared when the program exits. The
+emergency booking twist is implemented; the other twist choices are not part
+of this project.

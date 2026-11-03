@@ -5,6 +5,7 @@ class Person(ABC):
     _constructor_calls = 0
 
     def __init__(self, name, person_id):
+        # Validate shared person data so every subclass follows the same rules.
         if not isinstance(name, str) or not name.strip():
             raise ValueError("Name cannot be empty")
 
@@ -15,6 +16,7 @@ class Person(ABC):
 
         self._name = name
         self._id = person_id
+        # Keep the counter on Person so subclasses share one count.
         Person._constructor_calls += 1
 
     @property
