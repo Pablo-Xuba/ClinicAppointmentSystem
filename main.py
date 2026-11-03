@@ -302,57 +302,93 @@ def run_system_demonstrations():
     print("\nDemonstration complete. See the [log] lines above for action history.")
 
 
-def _print_menu(clinic):
-    print("\n" + "=" * 58)
-    print(f"CLINIC APPOINTMENT SYSTEM  |  Current Clinic Hour: {clinic.current_hour} / 168")
-    print("=" * 58)
-    print("1.  Register Patient")
-    print("2.  Register Staff Member")
-    print("3.  View Patients")
-    print("4.  View Staff Members")
-    print("5.  View Staff Fees")
-    print("6.  Book Appointment")
-    print("7.  Confirm Appointment")
-    print("8.  Cancel Appointment")
-    print("9.  View All Appointments")
-    print("10. Flag Patient as Emergency")
-    print("11. Demonstrate Emergency Booking")
-    print("12. Demonstrate Multiple Inheritance")
-    print("13. Demonstrate Clock")
-    print("14. View Appointment Log")
-    print("15. Run System Demonstrations")
-    print("16. Advance Clinic Clock")
-    print("17. Exit")
-    print("=" * 58)
+def _print_main_menu(clinic):
+    print("\n" + "=" * 40)
+    print("CLINIC APPOINTMENT SYSTEM")
+    print(f"Current Clinic Hour: {clinic.current_hour} / 168")
+    print("=" * 40)
+
+    print("Patients")
+    print("1. Register Patient")
+    print("2. View Patients")
+    print("3. Flag Patient as Emergency")
+
+    print("\nStaff")
+    print("4. Register Staff Member")
+    print("5. View Staff Members")
+    print("6. View Staff Fees")
+
+    print("\nAppointments")
+    print("7. Book Appointment")
+    print("8. Confirm Appointment")
+    print("9. Cancel Appointment")
+    print("10. View All Appointments")
+
+    print("\nOther")
+    print("11. Advance Clinic Clock")
+    print("12. View Appointment Log")
+    print("13. Open Demo Menu")
+    print("14. Exit")
+    print("=" * 40)
+
+
+def _print_demo_menu():
+    print("\n" + "-" * 30)
+    print("DEMO MENU")
+    print("-" * 30)
+    print("1. Emergency Booking Demo")
+    print("2. Multiple Inheritance Demo")
+    print("3. Clock Demo")
+    print("4. Full Assignment Demo")
+    print("5. Back to Main Menu")
+    print("-" * 30)
+
+
+def _open_demo_menu():
+    demo_actions = {
+        1: demonstrate_emergency_booking,
+        2: demonstrate_multiple_inheritance,
+        3: demonstrate_clock,
+        4: run_system_demonstrations,
+    }
+    while True:
+        _print_demo_menu()
+        try:
+            choice = _read_integer("Select a demo option: ", minimum=1, maximum=5)
+            if choice == 5:
+                return
+            demo_actions[choice]()
+        except ValueError as error:
+            print(f"Could not complete that action: {error}")
+        except EOFError:
+            print("\nReturning to main menu.")
+            return
 
 
 def main():
     clinic = Clinic(clock=Clock(current_hour=10))
     actions = {
         1: lambda: _register_patient(clinic),
-        2: lambda: _register_staff(clinic),
-        3: lambda: _show_patients(clinic),
-        4: lambda: _show_staff(clinic),
-        5: lambda: _show_staff_fees(clinic),
-        6: lambda: _book_appointment(clinic),
-        7: lambda: _confirm_appointment(clinic),
-        8: lambda: _cancel_appointment(clinic),
-        9: lambda: _show_appointments(clinic),
-        10: lambda: _flag_patient_emergency(clinic),
-        11: demonstrate_emergency_booking,
-        12: demonstrate_multiple_inheritance,
-        13: demonstrate_clock,
-        14: lambda: _show_log(clinic),
-        15: run_system_demonstrations,
-        16: lambda: _advance_clinic_clock(clinic),
+        2: lambda: _show_patients(clinic),
+        3: lambda: _flag_patient_emergency(clinic),
+        4: lambda: _register_staff(clinic),
+        5: lambda: _show_staff(clinic),
+        6: lambda: _show_staff_fees(clinic),
+        7: lambda: _book_appointment(clinic),
+        8: lambda: _confirm_appointment(clinic),
+        9: lambda: _cancel_appointment(clinic),
+        10: lambda: _show_appointments(clinic),
+        11: lambda: _advance_clinic_clock(clinic),
+        12: lambda: _show_log(clinic),
+        13: _open_demo_menu,
     }
 
     print("Welcome to the Clinic Appointment System.")
     while True:
-        _print_menu(clinic)
+        _print_main_menu(clinic)
         try:
-            choice = _read_integer("Select an option: ", minimum=1, maximum=17)
-            if choice == 17:
+            choice = _read_integer("Select an option: ", minimum=1, maximum=14)
+            if choice == 14:
                 print("Thank you. Goodbye.")
                 return
             actions[choice]()
