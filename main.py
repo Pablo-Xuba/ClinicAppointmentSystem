@@ -160,7 +160,7 @@ def demonstrate_emergency_booking():
     confirmed_patient = Patient("Taylor", 9003)
     emergency_patient.flag_emergency()
     confirmed_patient.flag_emergency()
-    doctor = Doctor("Dr Demo", 9101)
+    doctor = Doctor("Dr Samaz", 9101)
     nurse = Nurse("Nurse Demo", 9102)
 
     for patient in (routine_patient, emergency_patient, confirmed_patient):
@@ -234,17 +234,17 @@ def run_system_demonstrations():
     clock = Clock(current_hour=10)
     clinic = Clinic(clock=clock)
     patients = [
-        Patient("Alex", 9301),
-        Patient("Sam", 9302),
-        Patient("Riley", 9303),
+        Patient("Xuba", 9301),
+        Patient("Takudzwa", 9302),
+        Patient("Samaz", 9303),
     ]
     patients[1].flag_emergency()
     patients[2].flag_emergency()
     staff_members = [
-        Doctor("Dr Smith", 9401),
-        Nurse("Sarah", 9402),
+        Doctor("Dr Pablo", 9401),
+        Nurse("Rutendo", 9402),
         Pharmacist("John", 9403),
-        MedicalLecturer("Dr Lee", 9404, "Anatomy"),
+        MedicalLecturer("Dr Marlvin", 9404, "Anatomy"),
     ]
 
     print("\nRegistering sample patients and staff:")
@@ -361,7 +361,7 @@ def _open_demo_menu():
         except ValueError as error:
             print(f"Could not complete that action: {error}")
         except EOFError:
-            print("\nReturning to main menu.")
+            print("\nReturning to main menu")
             return
 
 
@@ -389,20 +389,20 @@ def main():
         try:
             choice = _read_integer("Select an option: ", minimum=1, maximum=14)
             if choice == 14:
-                print("Thank you. Goodbye.")
+                print("Thank you, Bye Bye")
                 return
             actions[choice]()
         except (ValueError, LookupError) as error:
             print(f"Could not complete that action: {error}")
         except EOFError:
-            print("\nInput ended. Goodbye.")
+            print("\nInput ended. Goodbye")
             return
 
 
 def _show_log(clinic):
     print("\nAppointment Log")
     if not clinic.log_entries:
-        print("No clinic actions have been recorded.")
+        print("No clinic actions have been recorded")
         return
     for entry in clinic.log_entries:
         print(entry)
