@@ -220,6 +220,15 @@ def demonstrate_clock():
     print("After advancing three hours:", clock.now())
 
 
+def _advance_clinic_clock(clinic):
+    hours = _read_integer(
+        "How many hours should the clinic clock advance? ",
+        minimum=0,
+    )
+    new_hour = clinic.advance_time(hours)
+    print(f"Clinic time is now hour {new_hour}.")
+
+
 def run_system_demonstrations():
     print("\nClinic Appointment System Demonstration")
     clock = Clock(current_hour=10)
@@ -312,7 +321,8 @@ def _print_menu(clinic):
     print("13. Demonstrate Clock")
     print("14. View Appointment Log")
     print("15. Run System Demonstrations")
-    print("16. Exit")
+    print("16. Advance Clinic Clock")
+    print("17. Exit")
     print("=" * 58)
 
 
@@ -334,14 +344,15 @@ def main():
         13: demonstrate_clock,
         14: lambda: _show_log(clinic),
         15: run_system_demonstrations,
+        16: lambda: _advance_clinic_clock(clinic),
     }
 
     print("Welcome to the Clinic Appointment System.")
     while True:
         _print_menu(clinic)
         try:
-            choice = _read_integer("Select an option: ", minimum=1, maximum=16)
-            if choice == 16:
+            choice = _read_integer("Select an option: ", minimum=1, maximum=17)
+            if choice == 17:
                 print("Thank you. Goodbye.")
                 return
             actions[choice]()

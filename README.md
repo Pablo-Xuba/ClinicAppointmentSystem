@@ -32,8 +32,10 @@ Open PowerShell in the project folder and run:
 python main.py
 ```
 
-Choose a number from the menu. Option 15 runs the full sample demonstration;
-option 16 exits.
+Choose a number from the menu. Option 15 runs the full sample demonstration,
+option 16 advances the clinic clock, and option 17 exits. Advancing the clock
+lets you test cancellation timing in the menu: a confirmed appointment can be
+cancelled with at least two hours left, but not with less than two hours.
 
 To run the tests:
 

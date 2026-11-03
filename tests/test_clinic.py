@@ -93,6 +93,22 @@ class ClinicTests(unittest.TestCase):
         appointment.cancel(current_hour=10)
         self.assertEqual(appointment.status, Appointment.CANCELLED)
 
+    def test_clinic_clock_advance_makes_two_hour_boundary_testable(self):
+        self.clinic.add_patient(self.patient)
+        self.clinic.add_staff(self.doctor)
+        too_soon = self.clinic.book_appointment(self.patient, self.doctor, 12)
+        allowed = self.clinic.book_appointment(self.patient, self.doctor, 15)
+        self.clinic.confirm_appointment(too_soon.appointment_id)
+        self.clinic.confirm_appointment(allowed.appointment_id)
+
+        self.clinic.advance_time(1)
+        with self.assertRaisesRegex(ValueError, "too late"):
+            self.clinic.cancel_appointment(too_soon.appointment_id)
+
+        self.clinic.advance_time(2)
+        self.clinic.cancel_appointment(allowed.appointment_id)
+        self.assertEqual(allowed.status, Appointment.CANCELLED)
+
     def test_appointment_cannot_be_cancelled_after_it_starts(self):
         appointment = Appointment(self.patient, self.doctor, 12)
         with self.assertRaisesRegex(ValueError, "has started"):
