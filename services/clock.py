@@ -1,3 +1,4 @@
+# Clinic time is controlled here so tests and demos never use the PC clock.
 class Clock:
 
     def __init__(self, current_hour=0):
@@ -18,15 +19,15 @@ class Clock:
 
     def advance(self, hours):
         if isinstance(hours, bool):
-            raise ValueError("Advance must be a non-negative whole number of hours")
+            raise ValueError("Advance must be a non negative whole number of hrs")
         try:
             whole_hours = int(hours)
         except (TypeError, ValueError, OverflowError) as error:
             raise ValueError(
-                "Advance must be a non-negative whole number of hours"
+                "Advance must be a non negative whole number of hours"
             ) from error
         if hours != whole_hours or whole_hours < 0:
-            raise ValueError("Advance must be a non-negative whole number of hours")
+            raise ValueError("Advance must be a non negative whole number of hours")
         if self._current_hour + whole_hours > 168:
             raise ValueError("Clock cannot advance past hour 168")
 

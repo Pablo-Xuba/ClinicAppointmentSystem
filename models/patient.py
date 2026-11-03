@@ -5,8 +5,7 @@ class Patient(Person):
 
     def __init__(self, name, person_id, emergency=False):
         super().__init__(name, person_id)
-
-        self._emergency = emergency
+        self._emergency = emergency # Emergency patients can bump PENDING bookings in the clinic.
 
     def role(self):
         return "Patient"

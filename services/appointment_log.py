@@ -22,11 +22,11 @@ class AppointmentLog:
             try:
                 yield self
             except Exception as error:
-                # Record the failed action, then let the caller handle the error.
+                # Keep a FAILED line, then re-raise so the menu can show it.
                 self._record(f"FAILED {description}: {error}")
                 raise
         finally:
-            # Always try to close the log, whether the action worked or failed.
+            # Close even if the action failed mid-way.
             self._is_open = False
             self._record("[log] closed")
 

@@ -236,7 +236,7 @@ def run_system_demonstrations():
     patients = [
         Patient("Xuba", 9301),
         Patient("Takudzwa", 9302),
-        Patient("Samaz", 9303),
+        Patient("Samaita", 9303),
     ]
     patients[1].flag_emergency()
     patients[2].flag_emergency()

@@ -6,11 +6,11 @@ from services.appointment_log import AppointmentLog
 from services.clock import Clock
 
 
-# Rules (invariants) the clinic always keeps true:
-# - Patient and staff IDs do not repeat.
-# - A patient or staff member cannot have two active appointments at one hour.
-# - An emergency may replace a pending booking, but not a confirmed one.
-# - Every public action is logged, including actions that fail.
+# Rules the clinic always keeps true:
+# - Patient and staff IDs do not repeat
+# - A patient or staff member cannot have two active appointments at one hour
+# - An emergency may replace a pending booking but not a confirmed one
+# - Every public action is logged including actions that fail
 class Clinic:
     def __init__(
         self,
@@ -32,6 +32,7 @@ class Clinic:
 
     @property
     def patients(self):
+        # Tuple so callers cant append to the clinics real list
         return tuple(self._patients)
 
     @property
@@ -97,8 +98,8 @@ class Clinic:
                         "An emergency booking cannot bump a confirmed appointment"
                     )
 
-                # Check every conflict before cancelling any, so rejection
-                # cannot leave the clinic with only some bookings bumped.
+                # Check every conflict before cancelling any so rejection
+                # cannot leave the clinic with only some bookings bumped
                 if self._clock.now() >= start_hour:
                     raise ValueError(
                         "An emergency booking cannot bump an appointment "
@@ -161,8 +162,8 @@ class Clinic:
             raise ValueError(f"The {description} is not registered with this clinic")
 
     def _conflicts(self, patient, staff, start_hour):
-        # A booking conflicts if its patient or staff is already busy at this hour.
-        # Cancelled appointments no longer reserve that hour.
+        # A booking conflicts if its patient or staff is already busy at this hour
+        # Cancelled appointments no longer reserve that hour
         return [
             appointment
             for appointment in self._appointments
@@ -181,4 +182,4 @@ class Clinic:
         for patient in self._patients:
             if patient.person_id == person_id:
                 return patient
-        raise LookupError(f"Patient #{person_id} was not found")
+        raise LookupError(f"Patient #{person_id} not found")
