@@ -75,6 +75,12 @@ class ClinicTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "cannot be restored"):
             appointment.confirm()
 
+    def test_appointment_status_cannot_be_changed_directly(self):
+        appointment = Appointment(self.patient, self.doctor, 12)
+        with self.assertRaises(AttributeError):
+            appointment.status = Appointment.CANCELLED
+        self.assertEqual(appointment.status, Appointment.PENDING)
+
     def test_confirmed_appointment_cannot_be_cancelled_with_less_than_two_hours(self):
         appointment = Appointment(self.patient, self.doctor, 12)
         appointment.confirm()

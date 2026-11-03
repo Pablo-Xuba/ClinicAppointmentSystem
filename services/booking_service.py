@@ -6,12 +6,12 @@ from services.appointment_log import AppointmentLog
 from services.clock import Clock
 
 
-# Invariants:
-# 1. Patient and staff person IDs are unique across the clinic.
-# 2. A patient and a staff member each have at most one active appointment
-#    at any hour.
-# 3. Emergency bookings may bump pending appointments, never confirmed ones.
-# 4. Public clinic actions are logged, including failures.
+# INVARIANTS:
+# - Patient and staff IDs are unique across the clinic.
+# - A patient and a staff member each have at most one active appointment
+#   at any hour.
+# - Emergency bookings may bump pending appointments, never confirmed ones.
+# - Public clinic actions are logged, including failures.
 class Clinic:
     def __init__(
         self,
@@ -162,7 +162,8 @@ class Clinic:
             raise ValueError(f"The {description} is not registered with this clinic")
 
     def _conflicts(self, patient, staff, start_hour):
-        # Cancelled appointments no longer reserve a patient's or staff member's hour.
+        # A booking conflicts if its patient or staff is already busy at this hour.
+        # Cancelled appointments no longer reserve that hour.
         return [
             appointment
             for appointment in self._appointments

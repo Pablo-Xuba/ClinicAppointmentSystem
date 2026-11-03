@@ -3,13 +3,12 @@ from models.staff import Staff
 from policies.cancellation_policy import CancellationPolicy
 
 
-# Invariants:
-# 1. An appointment must have a valid patient and staff member.
-# 2. The start hour must be between 0 and 168.
-# 3. Every appointment lasts exactly one hour.
-# 4. A cancelled appointment can never be restored.
-# 5. An appointment cannot be cancelled after it starts.
-# 6. A confirmed appointment needs at least two hours' notice to cancel.
+# INVARIANTS:
+# - An appointment has a valid patient and staff member.
+# - Its start hour is between 0 and 168, and it lasts exactly one hour.
+# - A cancelled appointment can never be restored.
+# - It cannot be cancelled after it starts.
+# - A confirmed appointment needs at least two hours' notice to cancel.
 class Appointment:
 
     PENDING = "PENDING"

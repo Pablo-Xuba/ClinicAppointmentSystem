@@ -110,6 +110,12 @@ The clinic prevents a patient or staff member from having two active
 (non-cancelled) appointments at the same hour. IDs must be unique across all
 registered patients and staff.
 
+`Clinic.book_appointment()` checks the existing appointments before booking.
+It ignores cancelled appointments and rejects the booking if the same patient
+or the same staff member already has a non-cancelled appointment at that hour.
+For emergencies, it first checks every conflict; if even one is confirmed, it
+rejects the request before cancelling any pending appointments.
+
 The clinic hour is a whole number from 0 to 168. The `Clock` starts at hour 10
 in the menu and can be advanced in the demonstration. Passing a `Clock` into
 the clinic makes time predictable in tests; tests do not need to wait for the
@@ -129,6 +135,14 @@ with the reason `"bumped"`, and the new emergency appointment is created as
 Each clinic action opens the log, records success or failure, and tries to
 close the log even if the action fails. Errors are still reported to the
 caller; they are not silently ignored.
+
+For example, the deliberate failed cancellation in option 15 prints:
+
+```text
+[log] opened
+FAILED cancel #1: too late: confirmed appointments need 2 hours' notice
+[log] closed
+```
 
 If the output stream itself fails, the program cannot guarantee the log entry
 was written. It reports the write or close error instead of pretending the
@@ -171,7 +185,9 @@ would make timing tests unpredictable and harder to repeat.
 ### D3. What changed for Pharmacist?
 
 The pharmacist class provides its role and fee. The shared display loop and
-clinic do not need pharmacist-specific code.
+clinic do not need pharmacist-specific code. Nothing else leaked into the
+clinic or the loop: polymorphism lets each staff class supply its own role
+and fee through the same methods.
 
 ### D4. What fee does MedicalLecturer use?
 
