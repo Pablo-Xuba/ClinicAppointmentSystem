@@ -10,6 +10,3 @@ class Nurse(Staff):
 
     def fee(self):
         return 10 + (self.REG_NUMBER % 3)
-
-    def buffer_hours(self):
-        return 1

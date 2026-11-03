@@ -10,6 +10,3 @@ class Doctor(Staff):
 
     def fee(self):
         return 40 + 5 * (self.REG_NUMBER % 5)
-
-    def buffer_hours(self):
-        return 2
