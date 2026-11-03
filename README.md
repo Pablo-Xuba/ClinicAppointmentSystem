@@ -3,14 +3,14 @@
 A small Python terminal program for managing clinic patients, staff, and
 appointments. It uses only Python's standard library.
 
-**Registration number:** 2420089
+**Registration number:** 2420089 and 2420444
 
 **Pair members:** Marlvin A. Munyanyi and Takudzwa Pablo Magawagawa
 
 **Python version:** 3.14
 
 The registration number gives `2420089 mod 4 = 1`, so this project uses the
-**emergency booking** option from the assignment.
+**emergency booking** option from the assignment.(P = 2420089 first reg)
 
 ## Project files
 
@@ -53,7 +53,7 @@ The main menu has 14 options:
 
 From option 13, choose Demo Menu option 4 to run the full assignment
 demonstration. The other demo options show emergency booking, multiple
-inheritance, and the clock individually; option 5 returns to the main menu.
+inheritance and the clock individually; option 5 returns to the main menu.
 Advancing the clinic clock from main-menu option 11 lets you test cancellation
 timing. For example, a confirmed appointment at hour 14 can be cancelled at
 hour 12, but not at hour 13.
