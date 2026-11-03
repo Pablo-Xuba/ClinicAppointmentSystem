@@ -6,12 +6,11 @@ from services.appointment_log import AppointmentLog
 from services.clock import Clock
 
 
-# INVARIANTS:
-# - Patient and staff IDs are unique across the clinic.
-# - A patient and a staff member each have at most one active appointment
-#   at any hour.
-# - Emergency bookings may bump pending appointments, never confirmed ones.
-# - Public clinic actions are logged, including failures.
+# Rules (invariants) the clinic always keeps true:
+# - Patient and staff IDs do not repeat.
+# - A patient or staff member cannot have two active appointments at one hour.
+# - An emergency may replace a pending booking, but not a confirmed one.
+# - Every public action is logged, including actions that fail.
 class Clinic:
     def __init__(
         self,

@@ -58,6 +58,16 @@ class ClinicTests(unittest.TestCase):
         self.assertEqual(appointment.start_hour, 12)
         self.assertEqual(appointment.duration_hours, 1)
 
+    def test_appointment_start_hour_must_be_a_whole_number_from_zero_to_168(self):
+        earliest = Appointment(self.patient, self.doctor, 0)
+        latest = Appointment(self.patient, self.doctor, 168)
+        self.assertEqual(earliest.start_hour, 0)
+        self.assertEqual(latest.start_hour, 168)
+
+        for invalid_hour in (-1, 169, 1.5, True, "not an hour"):
+            with self.subTest(hour=invalid_hour), self.assertRaises(ValueError):
+                Appointment(self.patient, self.doctor, invalid_hour)
+
     def test_appointment_rejects_invalid_patient_or_staff_objects(self):
         with self.assertRaisesRegex(ValueError, "requires a Patient and a Staff"):
             Appointment(object(), self.doctor, 12)
@@ -244,6 +254,12 @@ class ClinicTests(unittest.TestCase):
         for invalid_hour in (-1, 169, 1.5, True, "not an hour"):
             with self.subTest(hour=invalid_hour), self.assertRaises(ValueError):
                 Clock(current_hour=invalid_hour)
+
+    def test_clock_cannot_advance_past_hour_168(self):
+        clock = Clock(current_hour=168)
+        with self.assertRaisesRegex(ValueError, "past hour 168"):
+            clock.advance(1)
+        self.assertEqual(clock.now(), 168)
 
     def test_clinic_collection_properties_do_not_expose_internal_lists(self):
         self.clinic.add_patient(self.patient)
